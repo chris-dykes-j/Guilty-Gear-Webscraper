@@ -28,6 +28,7 @@ const character_links = [
 	"https://dustloop.com/wiki/index.php?title=GGST/Goldlewis_Dickinson"
 ];
 
+let character_id = 1;
 character_links.forEach(link => {
 	axios(link)
 		.then(res => {
@@ -35,12 +36,32 @@ character_links.forEach(link => {
 			const $ = cheerio.load(HTML);
 			const move_data = [];
 			const character_name = $("#fpflexsection th span").text();
-			console.log(character_name);
+
 			$(".mw-headline big", HTML).each(function () {
-				move_data.push($(this).text())
+				move_data.push({
+					//name: character_name,
+					move_name: $(this).text(), /*
+					input: $(".input-badge").text(),
+					damage: $(".attack-container "),
+					guard: $,
+					startup: $,
+					active: $,
+					recovery_frames: $,
+					on_block: $,
+					invulnerability: $ */
+				})
 			});
-			// console.log(move_data);
-			fs.writeFile(`./sql/${character_name}.sql`, "blah", error => {
+			console.log(move_data);
+
+			let SQL_INSERT =
+				`INSERT INTO characters VALUES (${character_id}, '${character_name});\n\n`;
+			/*SQL_INSERT +=
+				`INSERT INTO move_list VALUES (${move_id}, ${character_id}, ${move_name}, ${input},
+					${damage},	${guard}, ${startup}, ${active}, ${recovery_frames}, ${on_block}, ${invulnerability};\n`;
+			*/
+			character_id++;
+
+			fs.writeFile(`./sql/${character_name}.sql`, SQL_INSERT, error => {
 				if (error) { console.log (error); return; }
 			});
 		})
