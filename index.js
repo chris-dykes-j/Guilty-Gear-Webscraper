@@ -1,6 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
+const fs = require("fs");
 
 const app = express();
 const PORT = 3000;
@@ -33,10 +34,15 @@ character_links.forEach(link => {
 			const HTML = res.data;
 			const $ = cheerio.load(HTML);
 			const move_data = [];
+			const character_name = $("#fpflexsection th span").text();
+			console.log(character_name);
 			$(".mw-headline big", HTML).each(function () {
 				move_data.push($(this).text())
 			});
 			// console.log(move_data);
+			fs.writeFile(`./sql/${character_name}.sql`, "blah", error => {
+				if (error) { console.log (error); return; }
+			});
 		})
 		.catch(error => {
 			console.error(error);

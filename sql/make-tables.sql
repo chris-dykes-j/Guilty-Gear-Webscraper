@@ -17,8 +17,8 @@ CREATE TABLE move_list (
 	invulnerability TEXT
 );
 
-CREATE TABLE gatling_options (
+/* CREATE TABLE gatling_options (
 	gatling_id SERIAL PRIMARY KEY,
 	move_id INTEGER REFERENCES move_list (move_id),
 	gatling_move TEXT
-);
+); */
