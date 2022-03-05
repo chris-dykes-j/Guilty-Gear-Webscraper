@@ -1,5 +1,4 @@
-#Scrape to SQL (WIP)
+#Scrape to SQL
 
-Scrapper to pull frame data from Dustloop Website for PostgreSQL.
-I used code for the scraper from here (https://github.com/kubowania/nodejs-webscraper).
-SQL output will be done soon.
+Scraper to pull frame data from Dustloop Website for PostgreSQL.
+I used code for the scraper from Ania Kubow's nodejs webscraper (https://github.com/kubowania/nodejs-webscraper), making alterations specific to data desired. SQL output is tricky, but will be done soon.
