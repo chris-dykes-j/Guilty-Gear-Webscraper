@@ -2,10 +2,12 @@ const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
 
+const app = express();
+const PORT = 3000;
+
 const character_links = [
 	"https://dustloop.com/wiki/index.php?title=GGST/Ramlethal_Valentine",
 	"https://dustloop.com/wiki/index.php?title=GGST/Sol_Badguy",
-	/*
 	"https://dustloop.com/wiki/index.php?title=GGST/Jack-O",
 	"https://dustloop.com/wiki/index.php?title=GGST/Nagoriyuki",
 	"https://dustloop.com/wiki/index.php?title=GGST/Millia_Rage",
@@ -23,9 +25,7 @@ const character_links = [
 	"https://dustloop.com/wiki/index.php?title=GGST/Potemkin",
 	"https://dustloop.com/wiki/index.php?title=GGST/Giovanna",
 	"https://dustloop.com/wiki/index.php?title=GGST/Goldlewis_Dickinson"
-	*/
 ];
-const character_data = [];
 
 character_links.forEach(link => {
 	axios(link)
@@ -36,13 +36,11 @@ character_links.forEach(link => {
 			$(".mw-headline big", HTML).each(function () {
 				move_data.push($(this).text())
 			});
-			character_data.push(move_data);
-			console.log(character_data); // Data will output here with no problems, but...
+			// console.log(move_data);
 		})
 		.catch(error => {
 			console.error(error);
 		})
 });
-console.log(character_data); // ... data appears empty when called here.
 
-app.listen(PORT, () => console.log(`Everything going well; Port ${PORT}`));
+app.listen(PORT, () => console.log(`Heaven or Hell. Port ${PORT}`));
