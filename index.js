@@ -6,10 +6,10 @@ const fs = require("fs");
 const app = express();
 const PORT = 3000;
 
-// There is probably a better way, but this works.
+// There is definitely a better way, but this works.
 const character_links = [
-	"https://dustloop.com/wiki/index.php?title=GGST/Ramlethal_Valentine/Frame_Data", /*
-	"https://dustloop.com/wiki/index.php?title=GGST/Sol_Badguy/Frame_Data",
+	"https://dustloop.com/wiki/index.php?title=GGST/Ramlethal_Valentine/Frame_Data", 
+	"https://dustloop.com/wiki/index.php?title=GGST/Sol_Badguy/Frame_Data",/*
 	"https://dustloop.com/wiki/index.php?title=GGST/Jack-O/Frame_Data",
 	"https://dustloop.com/wiki/index.php?title=GGST/Nagoriyuki/Frame_Data",
 	"https://dustloop.com/wiki/index.php?title=GGST/Millia_Rage/Frame_Data",
@@ -35,16 +35,16 @@ character_links.forEach(link => {
 		.then(res => {
 			const HTML = res.data;
 			const $ = cheerio.load(HTML);
-			const move_data = [];
+			const data_hold = [];
 			const character_name = link.replace("https://dustloop.com/wiki/index.php?title=GGST/", "")
 				.replace("/Frame_Data", "");
 			console.log(character_name);
 
 			$(".cargoDynamicTable tr", HTML).each((_, element) => {
-				let attack = $(element).text().replace(/\s+/g, ' ').split(" ");
-				if (attack[1] != "input" && attack[1] != "name") { move_data.push(attack) };
+				let attack = $(element).text().replace(/\s+/g, ' ').substring(1);
+				if (!attack.startsWith("input") && !attack.startsWith("name")) { data_hold.push(attack) };
 			});
-			console.log(move_data);
+			console.log(data_hold);
 			/*
 					name: character_name,
 					move_name: $(this).text(),
@@ -55,9 +55,11 @@ character_links.forEach(link => {
 					active: $,
 					recovery_frames: $,
 					on_block: $,
-					invulnerability: $ 
+					invulnerability: 
 			*/
-			
+
+			const move_data = [];
+
 			let SQL_INSERT =
 				`INSERT INTO characters VALUES (${character_id}, '${character_name.replace("_", " ")}');\n\n`;
 			/*SQL_INSERT +=
@@ -66,7 +68,7 @@ character_links.forEach(link => {
 			*/
 			character_id++;
 
-			fs.writeFile(`./sql/${character_name}.sql`, SQL_INSERT, error => {
+			fs.writeFile(`./sql/${character_name.toLowerCase()}.sql`, SQL_INSERT, error => {
 				if (error) { console.log (error); return; }
 			});
 		})
