@@ -8,7 +8,7 @@ const PORT = 3000;
 
 // There is probably a better way, but this works.
 const character_links = [
-	"https://dustloop.com/wiki/index.php?title=GGST/Ramlethal_Valentine/Frame_Data",
+	"https://dustloop.com/wiki/index.php?title=GGST/Ramlethal_Valentine/Frame_Data", /*
 	"https://dustloop.com/wiki/index.php?title=GGST/Sol_Badguy/Frame_Data",
 	"https://dustloop.com/wiki/index.php?title=GGST/Jack-O/Frame_Data",
 	"https://dustloop.com/wiki/index.php?title=GGST/Nagoriyuki/Frame_Data",
@@ -26,12 +26,12 @@ const character_links = [
 	"https://dustloop.com/wiki/index.php?title=GGST/Axl_Low/Frame_Data",
 	"https://dustloop.com/wiki/index.php?title=GGST/Potemkin/Frame_Data",
 	"https://dustloop.com/wiki/index.php?title=GGST/Giovanna/Frame_Data",
-	"https://dustloop.com/wiki/index.php?title=GGST/Goldlewis_Dickinson/Frame_Data"
+	"https://dustloop.com/wiki/index.php?title=GGST/Goldlewis_Dickinson/Frame_Data" */
 ];
 
 let character_id = 1;
 character_links.forEach(link => {
-	axios(link)
+	axios.get(link)
 		.then(res => {
 			const HTML = res.data;
 			const $ = cheerio.load(HTML);
@@ -40,10 +40,12 @@ character_links.forEach(link => {
 				.replace("/Frame_Data", "");
 			console.log(character_name);
 
-			//$("#fpflexsection th span").text();
+			$(".cargoDynamicTable tr", HTML).each((_, element) => {
+				let attack = $(element).text().replace(/\s+/g, ' ').split(" ");
+				if (attack[1] != "input" && attack[1] != "name") { move_data.push(attack) };
+			});
+			console.log(move_data);
 			/*
-			$(".mw-headline big", HTML).each(function () {
-				move_data.push({
 					name: character_name,
 					move_name: $(this).text(),
 					input: $(".input-badge").text() ,
@@ -54,8 +56,7 @@ character_links.forEach(link => {
 					recovery_frames: $,
 					on_block: $,
 					invulnerability: $ 
-				})
-			});*/
+			*/
 			
 			let SQL_INSERT =
 				`INSERT INTO characters VALUES (${character_id}, '${character_name.replace("_", " ")}');\n\n`;
