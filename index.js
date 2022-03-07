@@ -1,10 +1,8 @@
-const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const fs = require("fs");
 
-const app = express();
-const PORT = 3000;
+console.log(`Heaven or Hell.`);
 
 // There is definitely a better way, but this works.
 const character_links = [
@@ -29,33 +27,34 @@ const character_links = [
 	"https://dustloop.com/wiki/index.php?title=GGST/Goldlewis_Dickinson/Frame_Data"
 ];
 
+// ID variables for SQL.
 let character_id = 1;
+let move_id = 1;
+
 character_links.forEach(link => {
 	axios.get(link)
 		.then(res => {
 			const HTML = res.data;
 			const $ = cheerio.load(HTML);
-			const data_hold = [];
 			const character_name = link.replace("https://dustloop.com/wiki/index.php?title=GGST/", "")
 				.replace("/Frame_Data", "");
-			console.log(character_name);
 
+			// Taking table rows, extracting cells; regex to deal with whitespace from HTML.
+			const temporary = [];
+			const move_data = [];
 			$(".cargoDynamicTable tr", HTML).each((_, element) => {
 				const attack = $(element).text().replace(/ +/g, "_").replace(/\s+/g, " ").substring(1);
-				if (!attack.startsWith("input") && !attack.startsWith("name")) { data_hold.push(attack) };
+				if (!attack.startsWith("input") && !attack.startsWith("name")) { temporary.push(attack) };
 			});
-
-			const move_data = [];
-			data_hold.forEach(entry => {
+			temporary.forEach(entry => {
 				const attack = entry.split(" ");
 				move_data.push(attack);
 			});
 
-			let SQL_INSERT =
-				`INSERT INTO characters VALUES (${character_id}, '${character_name.replace("_", " ")}');\n\n`;
+			let SQL_INSERT = `INSERT INTO characters VALUES (${character_id}, ` 
+				+ `'${character_name.replace("_", " ")}');\n\n`;
 			
-			//This sequence sucks and should be refactored.
-			let move_id = 1;
+			//This if-else sequence is crummy and should be refactored if possible.
 			move_data.forEach(attack => {					
 				let input = attack[0];
 				let move_name, damage, guard, startup, active, recovery_frames, on_block;
@@ -86,18 +85,18 @@ character_links.forEach(link => {
 						on_block = attack[7]
 					}
 				}
-				SQL_INSERT += `INSERT INTO move_list VALUES (${move_id}, ${character_id}, '${input}', '${move_name}', '${damage}',	'${guard}', '${startup}', '${active}', '${recovery_frames}', '${on_block}');\n`;
+				SQL_INSERT += `INSERT INTO move_list VALUES (${move_id}, ${character_id}, '${input}', `
+					+ `'${move_name}', '${damage}',	'${guard}', '${startup}', '${active}', '${recovery_frames}', '${on_block}');\n`;
 				move_id++;
 			});
 			character_id++;
 
 			fs.writeFile(`./sql/${character_name.toLowerCase()}.sql`, SQL_INSERT, error => {
 				if (error) { console.log (error); return; }
+				else { console.log(character_name.replace("_", " ")); }
 			});
 		})
 		.catch(error => {
 			console.error(error);
 		})
 });
-
-app.listen(PORT, () => console.log(`Heaven or Hell. Port ${PORT}`));
