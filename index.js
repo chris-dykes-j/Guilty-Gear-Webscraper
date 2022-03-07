@@ -43,7 +43,11 @@ character_links.forEach(link => {
 			const temporary = [];
 			const move_data = [];
 			$(".cargoDynamicTable tr", HTML).each((_, element) => {
-				const attack = $(element).text().replace(/ +/g, "_").replace(/\s+/g, " ").substring(1);
+				const attack = $(element).text()
+					.replace(/ +/g, "_")
+					.replace(/\s+/g, " ")
+					.replace("'", "''")
+					.substring(1);
 				if (!attack.startsWith("input") && !attack.startsWith("name")) { temporary.push(attack) };
 			});
 			temporary.forEach(entry => {
