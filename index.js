@@ -55,48 +55,20 @@ character_links.forEach(link => {
 				move_data.push(attack);
 			});
 
-			let SQL_INSERT = `INSERT INTO characters VALUES (${character_id}, ` 
+			let SQL_INSERT = `INSERT INTO characters VALUES (${character_id}, `
 				+ `'${character_name.replace("_", " ")}');\n\n`;
-			
-			//This if-else sequence is crummy and should be refactored if possible.
-			move_data.forEach(attack => {					
-				let input = attack[0];
-				let move_name, damage, guard, startup, active, recovery_frames, on_block;
-				if (attack[0].includes("Throw")) {
-					move_name = attack[0];
-					damage = attack[1];
-					guard = attack[2];
-					startup = attack[3];
-					active = attack[4];
-					recovery_frames = attack[5];
-					on_block = "NULL";
-				} else {
-					if (attack[1].match(/^\d/)) {
-						move_name = attack[0];
-						damage = attack[1];
-						guard = attack[2];
-						startup = attack[3];
-						active = attack[4];
-						recovery_frames = attack[5];
-						on_block = attack[6]
-					} else {
-						move_name = attack[1];
-						damage = attack[2];
-						guard = attack[3];
-						startup = attack[4];
-						active = attack[5];
-						recovery_frames = attack[6];
-						on_block = attack[7]
-					}
-				}
-				SQL_INSERT += `INSERT INTO move_list VALUES (${move_id}, ${character_id}, '${input}', `
-					+ `'${move_name}', '${damage}',	'${guard}', '${startup}', '${active}', '${recovery_frames}', '${on_block}');\n`;
+
+			// Formats all attack data for SQL file.
+			move_data.forEach(attack => {
+				m = format_data(attack);
+				SQL_INSERT += `INSERT INTO move_list VALUES (${move_id}, ${character_id}, '${m.input}', `
+					+ `'${m.move_name}', '${m.damage}',	'${m.guard}', '${m.startup}', '${m.active}', '${m.recovery_frames}', '${m.on_block}');\n`;
 				move_id++;
 			});
 			character_id++;
 
 			fs.writeFile(`./sql/${character_name.toLowerCase()}.sql`, SQL_INSERT, error => {
-				if (error) { console.log (error); return; }
+				if (error) { console.log(error); return; }
 				else { console.log(character_name.replace("_", " ")); }
 			});
 		})
@@ -104,3 +76,41 @@ character_links.forEach(link => {
 			console.error(error);
 		})
 });
+
+// Function for formatting attack data.
+// It could be prettier, but it's ok.
+function format_data(attack) {
+	let input = attack[0];
+	let move_name, damage, guard, startup, active, recovery_frames, on_block;
+	if (attack[0].includes("Throw")) {
+		move_name = attack[0];
+		damage = attack[1];
+		guard = attack[2];
+		startup = attack[3];
+		active = attack[4];
+		recovery_frames = attack[5];
+		on_block = "NULL";
+	} else {
+		if (attack[1].match(/^\d/)) {
+			move_name = attack[0];
+			damage = attack[1];
+			guard = attack[2];
+			startup = attack[3];
+			active = attack[4];
+			recovery_frames = attack[5];
+			on_block = attack[6]
+		} else {
+			move_name = attack[1];
+			damage = attack[2];
+			guard = attack[3];
+			startup = attack[4];
+			active = attack[5];
+			recovery_frames = attack[6];
+			on_block = attack[7]
+		}
+	}
+	const attack_object = {
+		input, move_name, damage, guard, startup, active, recovery_frames, on_block
+	};
+	return attack_object;
+}
