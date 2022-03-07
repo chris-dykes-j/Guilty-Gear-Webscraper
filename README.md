@@ -1,6 +1,5 @@
 #Scrape to SQL
 
-Web-scraper to pull frame data from Dustloop Website for PostgreSQL.
+Web-scraper to pull Guilty Gear Strive frame data from Dustloop Website (https://dustloop.com/wiki/index.php) for a PostgreSQL database. Initially based off of Ania Kubow's nodejs webscraper (https://github.com/kubowania/nodejs-webscraper), I made significant alterations to retrieve data desired. The data will be used for a larger Guilty Gear project.
 
-I used code for the scraper from Ania Kubow's nodejs webscraper (https://github.com/kubowania/nodejs-webscraper), and made alterations specific to data desired.
-Code works, but needs refactoring and polish!
+The scraper could be used for other games on Dustloop, but alterations would need to be made.
