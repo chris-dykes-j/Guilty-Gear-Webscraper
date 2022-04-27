@@ -24,7 +24,8 @@ const character_links = [
 	"https://dustloop.com/wiki/index.php?title=GGST/Axl_Low/Frame_Data",
 	"https://dustloop.com/wiki/index.php?title=GGST/Potemkin/Frame_Data",
 	"https://dustloop.com/wiki/index.php?title=GGST/Giovanna/Frame_Data",
-	"https://dustloop.com/wiki/index.php?title=GGST/Goldlewis_Dickinson/Frame_Data"
+	"https://dustloop.com/wiki/index.php?title=GGST/Goldlewis_Dickinson/Frame_Data",
+	"https://dustloop.com/wiki/index.php?title=GGST/Testament/Frame_Data"
 ];
 
 // ID variables for SQL.
