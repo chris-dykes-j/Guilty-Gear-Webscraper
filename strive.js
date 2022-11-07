@@ -11,7 +11,7 @@ console.log("Heaven or Hell.");
 let characterId = 1;
 let moveId = 1;
 
-characterLinks.links.forEach(link => {
+characterLinks.strive.forEach(link => {
 	axios.get(link)
 		.then(res => {
 			const HTML = res.data;
