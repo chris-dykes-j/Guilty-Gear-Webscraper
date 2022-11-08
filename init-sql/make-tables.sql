@@ -9,7 +9,7 @@ CREATE TABLE characters (
     back_dash TEXT,
     forward_dash INT,
     unique_movement TEXT,
-    risc_multiplier REAL,
+    risc_multiplier REAL
 );
 
 CREATE TABLE move_list (
@@ -29,7 +29,7 @@ CREATE TABLE move_list (
 	invulnerability TEXT,
 	base_combo_scaling TEXT,
 	risc_gain TEXT,
-	risc_loss TEXT,
+	risc_loss TEXT
 );
 
 CREATE TABLE gatling_options (
@@ -40,5 +40,5 @@ CREATE TABLE gatling_options (
 	k TEXT,
 	s TEXT,
 	h TEXT,
-	d TEXT,
+	d TEXT
 );
