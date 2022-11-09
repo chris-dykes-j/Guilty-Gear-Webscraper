@@ -35,19 +35,19 @@ characterLinks.test.forEach(link => {
 
 			// Taking table rows, extracting cells; regex to deal with whitespace from HTML.
 			$(".cargoDynamicTable tr", HTML).each((_, element) => {
-				const attack = $(element)
-					.text()
+				let attack = $(element).text();
+				
+				attack.replace(/\t{8}/," undefined ") // For empty columns.
 					.replace(/ +/g, "_") // Prevents some data points from separating into different columns.
-					.replace(/\s+/g, " ") // I honestly forget why this is here, but it prevents a crash.
-					.replace("'", "''") // This was Zato's fault.
-					.substring(1);
+					.replace(/\s+/g, " ") // To deal with excess whitespace.
+					.replace("'", "''") // For SQL to insert '. This was Zato's fault.
+					.substring(1); // Avoids an empty column.
 				
 				if (!attack.startsWith("Input") && !attack.startsWith("Name") // Ignore the table headers.
 					&& !attack.startsWith("Dash_Cancel")) // Also ignore dash cancel.
 					temporary.push(attack);
 			});
 			
-			// Will need to figure out how to deal with empty table entries.
 			temporary.forEach(entry => {
 				const attack = entry.split(" ");
 				attackData.push(attack);
