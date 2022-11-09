@@ -75,5 +75,8 @@
     "https://www.dustloop.com/w/GGACR/Potemkin/Frame_Data",
     "https://www.dustloop.com/w/GGACR/I-No/Frame_Data",
     "https://www.dustloop.com/w/GGACR/Justice/Frame_Data"
+  ],
+  "test" : [
+    "https://www.dustloop.com/w/GGST/Ramlethal_Valentine/Frame_Data"
   ]
 }
