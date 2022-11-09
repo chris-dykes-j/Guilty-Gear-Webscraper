@@ -35,10 +35,10 @@ characterLinks.test.forEach(link => {
 
 			// Taking table rows, extracting cells; regex to deal with whitespace from HTML.
 			$(".cargoDynamicTable tr", HTML).each((_, element) => {
-				let attack = $(element).text();
-				
-				attack.replace(/\t{8}/," undefined ") // For empty columns.
+				const attack = $(element)
+					.text()
 					.replace(/ +/g, "_") // Prevents some data points from separating into different columns.
+					.replace(/\t{8}/," undefined ") // For empty columns.
 					.replace(/\s+/g, " ") // To deal with excess whitespace.
 					.replace("'", "''") // For SQL to insert '. This was Zato's fault.
 					.substring(1); // Avoids an empty column.
