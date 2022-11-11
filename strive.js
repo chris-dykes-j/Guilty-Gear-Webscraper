@@ -16,39 +16,47 @@ console.log("Heaven or Hell");
 let characterId = 1;
 let moveId = 1;
 
-characterLinks.test.forEach(link => { 
+characterLinks.strive.forEach(link => { 
 	axios.get(link)
 		.then(res => {
 			const HTML = res.data;
 			const $ = cheerio.load(HTML);
+
+			// Getting arrays ready.
+			const characterInfo = [];
+			const temporaryCharacter = [];
+			const attackData = [];
+			const temporaryAttack = [];
 			
 			// Parse the url to get the name.
 			const characterName = link
 				.split('/')
 				.at(5)
 				.replace("_", " ");
-			
-			// Getting arrays ready.
-			const temporary = [];
-			const characterData = [];
-			const attackData = [];
 
 			// Taking table rows, extracting cells; regex to deal with whitespace from HTML.
 			$(".cargoDynamicTable tr", HTML).each((_, element) => {
 				const attack = $(element)
 					.text()
 					.replace(/ +/g, "_") // Prevents some data points from separating into different columns.
-					.replace(/\t{8}/," undefined ") // For empty columns.
-					.replace(/\s+/g, " ") // To deal with excess whitespace.
+					
+					// To deal with empty columns. Ugly but works for now. Need to figure out an elegent method to deal with this. Having issues with loops.
+					.replace(/\t{24}/g," undefined ".repeat(5))
+					.replace(/\t{20}/g," undefined ".repeat(4)) 
+					.replace(/\t{16}/g," undefined ".repeat(3)) 
+					.replace(/\t{12}/g," undefined ".repeat(2)) 
+					.replace(/\t{8}/g," undefined ")
+					
+					.replace(/\s+/g, " ") // To deal with excess whitespace. Helps with first column.
 					.replace("'", "''") // For SQL to insert '. This was Zato's fault.
 					.substring(1); // Avoids an empty column.
 				
 				if (!attack.startsWith("Input") && !attack.startsWith("Name") // Ignore the table headers.
 					&& !attack.startsWith("Dash_Cancel")) // Also ignore dash cancel.
-					temporary.push(attack);
+					temporaryAttack.push(attack);
 			});
 			
-			temporary.forEach(entry => {
+			temporaryAttack.forEach(entry => {
 				const attack = entry.split(" ");
 				attackData.push(attack);
 			});
@@ -67,7 +75,7 @@ characterLinks.test.forEach(link => {
 			});
 			characterId++;
 
-			fs.writeFile(outputScript, insertQuery, error => {
+			fs.appendFile(outputScript, insertQuery, error => {
 				if (error)
 					console.log(error);
 				else 
@@ -82,8 +90,6 @@ characterLinks.test.forEach(link => {
 // console.log("Strive web scrape complete.")
 
 const formatData = (tableRow) => {
-	// tableRow.forEach(entry => entry.replace("_", " ")); // experiment.
-	
 	let i = 0;
   // Checking if second row contains an Attack name.
 	if (!tableRow[1].match(/^\d/)) i++;
@@ -111,3 +117,24 @@ const formatData = (tableRow) => {
 	
 	return attack;
 };
+
+/* WIP for extra character data
+$(".cargoTable tr", HTML).each((_, element) => {
+  const characterData = $(element)
+    .text()
+    .replace(/ +/g, "_")
+    .replace(/\t{16}/g," undefined ".repeat(3))
+    .replace(/\t{12}/g," undefined ".repeat(2))
+    .replace(/\t{8}/g," undefined ")
+    .replace(/\s+/g, " ")
+    .replace("'", "''");
+  
+  if (!characterData.startsWith("38"))
+    temporaryCharacter.push(characterData);
+  
+  temporaryCharacter.forEach(entry => {
+    const info = entry.split(" ")
+    characterInfo.push(info)
+  });
+});
+characterInfo.forEach(e => console.log(e.toString())) */
