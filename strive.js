@@ -57,7 +57,7 @@ characterLinks.strive.forEach(link => {
 					.replace(/\t{8}/g," - ")
 					
 					.replace(/\s+/g, " ") // To deal with excess whitespace. Helps with first column.
-					.replace("'", "''") // For SQL to insert '. Thanks Zato.
+					.replace(/'/g, "''") // For SQL to insert '. Thanks I-no.
 					.substring(1); // Avoids an empty column.
 				
 				if (!attack.startsWith("Input", 0) && !attack.startsWith("Name", 0) // Ignore the table headers.
@@ -118,6 +118,8 @@ characterLinks.strive.forEach(link => {
 			
 			characterId++;
 
+			fs.existsSync()
+			
 			fs.appendFile(outputScript, insertQuery, error => {
 				if (error)
 					console.log(error);
