@@ -4,10 +4,10 @@ const fs = require("fs");
 
 // Important constants
 const characterLinks = require("./character-links.json");
-const outputScript = "./output-sql/test.sql";
+const outputScript = "./output-sql/strive-move-data.sql";
 const characterTable = "strive_characters";
 const moveTable = "strive_move_list";
-const gatlingTable = "strive_gatling_table"; // implement later...
+const gatlingTable = "strive_gatling_table"; 
 
 // Most important part:
 console.log("Heaven or Hell");
@@ -15,8 +15,9 @@ console.log("Heaven or Hell");
 // SQL variables
 let characterId = 1;
 let moveId = 1;
+let gatlingId = 1;
 
-characterLinks.test.forEach(link => { 
+characterLinks.strive.forEach(link => { 
 	axios.get(link)
 		.then(res => {
 			const HTML = res.data;
@@ -49,11 +50,11 @@ characterLinks.test.forEach(link => {
 					.replace(/ +/g, "_") // Prevents some data points from separating into different columns.
 					
 					// To deal with empty columns. Ugly but works for now. Need to figure out an elegent method to deal with this. Having issues with loops.
-					.replace(/\t{24}/g," undefined ".repeat(5))
-					.replace(/\t{20}/g," undefined ".repeat(4)) 
-					.replace(/\t{16}/g," undefined ".repeat(3)) 
-					.replace(/\t{12}/g," undefined ".repeat(2)) 
-					.replace(/\t{8}/g," undefined ")
+					.replace(/\t{24}/g," - ".repeat(5))
+					.replace(/\t{20}/g," - ".repeat(4)) 
+					.replace(/\t{16}/g," - ".repeat(3)) 
+					.replace(/\t{12}/g," - ".repeat(2)) 
+					.replace(/\t{8}/g," - ")
 					
 					.replace(/\s+/g, " ") // To deal with excess whitespace. Helps with first column.
 					.replace("'", "''") // For SQL to insert '. Thanks Zato.
@@ -76,20 +77,24 @@ characterLinks.test.forEach(link => {
 			$(".wikitable tr", HTML).each((_, element) => {
 				const gatling = $(element)
 					.text()
-					.replace(/\n/g, " ")
+					.replace(/ /g, "_")
+					.replace(/\n/g, " ");
 				tempGatling.push(gatling);
-				console.log(gatling);
 			});
 			
+			// Maybe could be better.
 			tempGatling.forEach(entry => {
-				const gatling = entry.split("\t\t\t\t");
-				gatlingData.push(gatling);
+				const element = entry.split("\t\t\t\t");
+				element.forEach(gatling => {
+					if (/Guard:/g.test(gatling))
+						gatlingData.push(gatling.split(" "));
+				})
 			});
-			// console.log(gatlingData);
 			
 			// Query preparation:
 			const character = formatCharacterData(characterInfo[0][0]);
-			let insertQuery = '\n' + `INSERT INTO ${characterTable} VALUES (${characterId}, '${character.name}', ` +
+			let insertQuery =
+				'\n' + `INSERT INTO ${characterTable} VALUES (${characterId}, '${character.name}', ` +
 				`'${character.defense}', '${character.guts}', '${character.prejump}', '${character.weight}', '${character.backDash}', ` +
 				`'${character.forwardDash}', '${character.umo}', '${character.riscMult}', '${character.tensionGain}');\n\n`;
 			
@@ -102,9 +107,18 @@ characterLinks.test.forEach(link => {
 					`'${attack.riscGain}', '${attack.riscLoss}');\n`;
 				moveId++;
 			});
+			
+			gatlingData.forEach(tableRow => {
+				const gatling = formatGatlingData(tableRow);
+				insertQuery +=
+					`INSERT INTO ${gatlingTable} VALUES (${gatlingId}, ${characterId}, '${gatling.name}', '${gatling.p}', '${gatling.k}', ` +
+					`'${gatling.s}', '${gatling.h}', '${gatling.d}', '${gatling.cancel}');\n`;
+				gatlingId++;
+			});
+			
 			characterId++;
 
-			fs.writeFile(outputScript, insertQuery, error => {
+			fs.appendFile(outputScript, insertQuery, error => {
 				if (error)
 					console.log(error);
 				else 
@@ -116,7 +130,9 @@ characterLinks.test.forEach(link => {
 		})
 });
 
-const formatAttackData = (tableRow) => {
+const formatAttackData = (data) => {
+	const tableRow = data.map(item => item.replace(/_/g, " "));
+	
 	let i = 0;
   // Checking if second row contains an Attack name.
 	if (!tableRow[1].match(/^\d/)) i++;
@@ -140,7 +156,7 @@ const formatAttackData = (tableRow) => {
 	};
 	
 	if (tableRow[0].includes("Throw")) // For fun.
-		attack.onBlock = "Beats block";
+		attack.onBlock = "wins";
 	
 	return attack;
 };
@@ -163,5 +179,19 @@ const formatCharacterData = (data) => {
 		umo: tableRow[i++],
 		riscMult: tableRow[i++],
 		tensionGain: tableRow[i]
-	}
-}
+	};
+};
+
+const formatGatlingData = (data) => {
+	const tableRow = data.map(item => item.replace(/_/g, " "));
+	let i = 3;
+	return {
+		name: tableRow[1].replace(/G.*/, ""),
+		p: tableRow[i++],
+		k: tableRow[i++],
+		s: tableRow[i++],
+		h: tableRow[i++],
+		d: tableRow[i++],
+		cancel: tableRow[i]
+	};
+};

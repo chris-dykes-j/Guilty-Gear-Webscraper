@@ -4,7 +4,7 @@ November 2022.
 
 Update goals:
 - [x] Be up to date with Dustloop pages
-- [ ] Include more data to characters
+- [x] Include more data to characters
 - [ ] Include Xrd Rev 2, and Accent Core Plus R
 - [ ] Output three scripts for each game instead of scripts for each character (less of a pain)
 - [ ] Provide sql scripts to initialize tables

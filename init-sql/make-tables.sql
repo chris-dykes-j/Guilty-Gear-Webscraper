@@ -38,8 +38,7 @@ CREATE TABLE strive_move_list (
 
 CREATE TABLE strive_gatling_options (
     id SERIAL PRIMARY KEY,
-    move_id INT REFERENCES strive_move_list (id),
-    gatling_move TEXT,
+    move_name TEXT,
     p TEXT,
     k TEXT,
     s TEXT,
@@ -86,8 +85,7 @@ CREATE TABLE xrd_rev2_move_list (
 
 CREATE TABLE xrd_rev2_gatling_options (
     id SERIAL PRIMARY KEY,
-    move_id INT REFERENCES xrd_rev2_move_list(id),
-    gatling_move TEXT,
+    move_name TEXT,
     p TEXT,
     k TEXT,
     s TEXT,
@@ -140,8 +138,8 @@ CREATE TABLE plus_r_move_list (
 
 CREATE TABLE plus_r_gatling_options (
     id SERIAL PRIMARY KEY,
-    move_id INT REFERENCES plus_r_move_list (id),
-    gatling_move TEXT,
+    character_id INT REFERENCES strive_characters(int),
+    move_name TEXT,
     p TEXT,
     k TEXT,
     s TEXT,
