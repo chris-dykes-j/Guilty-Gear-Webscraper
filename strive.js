@@ -28,11 +28,12 @@ characterLinks.test.forEach(link => {
 			let attackData = [];
 			let temporaryAttack = [];
 			
-			// Parse the url to get the name. Now obselete...
+			/* Obselete
 			const characterName = link
 				.split('/')
 				.at(5)
 				.replace("_", " ");
+			*/
 
 			// Getting character data.
 			$(".cargoTable tr", HTML).each((_, element) => {
