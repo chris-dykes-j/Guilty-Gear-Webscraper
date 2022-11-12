@@ -46,8 +46,6 @@ characterLinks.test.forEach(link => {
 
 				temporaryCharacter.forEach(entry => characterInfo.push(entry.split(" ")));
 			});
-			// characterInfo[0].forEach(entry => entry = entry.replace(/[\n]/, "")); // Can't seem to get rid of \n
-
 			
 			// Taking table rows, extracting cells; regex to deal with whitespace from HTML.
 			$(".cargoDynamicTable tr", HTML).each((_, element) => {
@@ -76,10 +74,9 @@ characterLinks.test.forEach(link => {
 				attackData.push(attack);
 			});
 
-			const character = formatCharacterData(characterInfo[0]);
-			console.log(characterInfo[0]);
-			let insertQuery = '\n' + `INSERT INTO ${characterTable} VALUES (${characterId}, '${characterName}', ` +
-				`'${characterInfo[0][0]}', '${character.guts}', '${character.prejump}', '${character.weight}', '${character.backDash}', ` +
+			const character = formatCharacterData(characterInfo[0][0]);
+			let insertQuery = '\n' + `INSERT INTO ${characterTable} VALUES (${characterId}, '${character.name}', ` +
+				`'${character.defense}', '${character.guts}', '${character.prejump}', '${character.weight}', '${character.backDash}', ` +
 				`'${character.forwardDash}', '${character.umo}', '${character.riscMult}', '${character.tensionGain}');\n\n`;
 			
 			// Formats all attack data for SQL file.
@@ -105,8 +102,6 @@ characterLinks.test.forEach(link => {
 			console.error(error);
 		})
 });
-
-// console.log("Strive web scrape complete.")
 
 const formatAttackData = (tableRow) => {
 	let i = 0;
@@ -137,7 +132,12 @@ const formatAttackData = (tableRow) => {
 	return attack;
 };
 
-const formatCharacterData = (tableRow) => {
+const formatCharacterData = (data) => {
+	const tableRow = data
+		.split(/\n/g)
+		.map(item => item.replace("_", " ")
+	);
+	
 	let i = 0;
 	return {
 		name: tableRow[i++],
