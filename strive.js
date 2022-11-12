@@ -24,16 +24,9 @@ characterLinks.test.forEach(link => {
 
 			// Getting arrays ready.
 			let characterInfo = [];
-			let temporaryCharacter = [];
+			let tempCharacter = [];
 			let attackData = [];
-			let temporaryAttack = [];
-			
-			/* Obselete
-			const characterName = link
-				.split('/')
-				.at(5)
-				.replace("_", " ");
-			*/
+			let tempAttack = [];
 
 			// Getting character data.
 			$(".cargoTable tr", HTML).each((_, element) => {
@@ -43,9 +36,9 @@ characterLinks.test.forEach(link => {
 					.substring(1);
 				
 				if (!characterData.startsWith("ame", 0) && !characterData.startsWith("ump", 0))
-					temporaryCharacter.push(characterData);
+					tempCharacter.push(characterData);
 
-				temporaryCharacter.forEach(entry => characterInfo.push(entry.split(" ")));
+				tempCharacter.forEach(entry => characterInfo.push(entry.split(" ")));
 			});
 			
 			// Taking table rows, extracting cells; regex to deal with whitespace from HTML.
@@ -62,15 +55,15 @@ characterLinks.test.forEach(link => {
 					.replace(/\t{8}/g," undefined ")
 					
 					.replace(/\s+/g, " ") // To deal with excess whitespace. Helps with first column.
-					.replace("'", "''") // For SQL to insert '. This was Zato's fault.
+					.replace("'", "''") // For SQL to insert '. Thanks Zato.
 					.substring(1); // Avoids an empty column.
 				
 				if (!attack.startsWith("Input", 0) && !attack.startsWith("Name", 0) // Ignore the table headers.
 					&& !attack.startsWith("Dash_Cancel")) // Also ignore dash cancel.
-					temporaryAttack.push(attack);
+					tempAttack.push(attack);
 			});
 			
-			temporaryAttack.forEach(entry => {
+			tempAttack.forEach(entry => {
 				const attack = entry.split(" ");
 				attackData.push(attack);
 			});
@@ -96,7 +89,7 @@ characterLinks.test.forEach(link => {
 				if (error)
 					console.log(error);
 				else 
-					console.log(characterName);
+					console.log(character.name);
 			});
 		})
 		.catch(error => {
@@ -136,7 +129,7 @@ const formatAttackData = (tableRow) => {
 const formatCharacterData = (data) => {
 	const tableRow = data
 		.split(/\n/g)
-		.map(item => item.replace("_", " ")
+		.map(item => item.replace(/_/g, " ")
 	);
 	
 	let i = 0;
