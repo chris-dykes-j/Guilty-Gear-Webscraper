@@ -4,7 +4,7 @@ const fs = require("fs");
 
 // Important constants
 const characterLinks = require("./character-links.json");
-const outputScript = "./output-sql/strive-move-data.sql";
+const outputScript = "./output-sql/test.sql";
 const characterTable = "strive_characters";
 const moveTable = "strive_move_list";
 const gatlingTable = "strive_gatling_table"; // implement later...
@@ -12,28 +12,43 @@ const gatlingTable = "strive_gatling_table"; // implement later...
 // Most important part:
 console.log("Heaven or Hell");
 
-// ID variables for SQL.
+// SQL variables
 let characterId = 1;
 let moveId = 1;
 
-characterLinks.strive.forEach(link => { 
+characterLinks.test.forEach(link => { 
 	axios.get(link)
 		.then(res => {
 			const HTML = res.data;
 			const $ = cheerio.load(HTML);
 
 			// Getting arrays ready.
-			const characterInfo = [];
-			const temporaryCharacter = [];
-			const attackData = [];
-			const temporaryAttack = [];
+			let characterInfo = [];
+			let temporaryCharacter = [];
+			let attackData = [];
+			let temporaryAttack = [];
 			
-			// Parse the url to get the name.
+			// Parse the url to get the name. Now obselete...
 			const characterName = link
 				.split('/')
 				.at(5)
 				.replace("_", " ");
 
+			// Getting character data.
+			$(".cargoTable tr", HTML).each((_, element) => {
+				const characterData = $(element)
+					.text()
+					.replace(/ +/g, "_")
+					.substring(1);
+				
+				if (!characterData.startsWith("ame", 0) && !characterData.startsWith("ump", 0))
+					temporaryCharacter.push(characterData);
+
+				temporaryCharacter.forEach(entry => characterInfo.push(entry.split(" ")));
+			});
+			// characterInfo[0].forEach(entry => entry = entry.replace(/[\n]/, "")); // Can't seem to get rid of \n
+
+			
 			// Taking table rows, extracting cells; regex to deal with whitespace from HTML.
 			$(".cargoDynamicTable tr", HTML).each((_, element) => {
 				const attack = $(element)
@@ -51,7 +66,7 @@ characterLinks.strive.forEach(link => {
 					.replace("'", "''") // For SQL to insert '. This was Zato's fault.
 					.substring(1); // Avoids an empty column.
 				
-				if (!attack.startsWith("Input") && !attack.startsWith("Name") // Ignore the table headers.
+				if (!attack.startsWith("Input", 0) && !attack.startsWith("Name", 0) // Ignore the table headers.
 					&& !attack.startsWith("Dash_Cancel")) // Also ignore dash cancel.
 					temporaryAttack.push(attack);
 			});
@@ -61,21 +76,25 @@ characterLinks.strive.forEach(link => {
 				attackData.push(attack);
 			});
 
-			let insertQuery = `INSERT INTO ${characterTable} VALUES (${characterId}, '${characterName}');\n\n`;
-
+			const character = formatCharacterData(characterInfo[0]);
+			console.log(characterInfo[0]);
+			let insertQuery = '\n' + `INSERT INTO ${characterTable} VALUES (${characterId}, '${characterName}', ` +
+				`'${characterInfo[0][0]}', '${character.guts}', '${character.prejump}', '${character.weight}', '${character.backDash}', ` +
+				`'${character.forwardDash}', '${character.umo}', '${character.riscMult}', '${character.tensionGain}');\n\n`;
+			
 			// Formats all attack data for SQL file.
 			attackData.forEach(tableRow => {
-				const attack = formatData(tableRow); // Formats the data for output.
+				const attack = formatAttackData(tableRow); // Formats the data for output.
 				insertQuery +=
 					`INSERT INTO ${moveTable} VALUES (${moveId}, ${characterId}, '${attack.input}', '${attack.moveName}', '${attack.damage}', ` +
 					`'${attack.guard}', '${attack.startup}', '${attack.active}', '${attack.recoveryFrames}', '${attack.onBlock}', ` +
 					`'${attack.onHit}', '${attack.level}', '${attack.counterType}', '${attack.invulnerability}', '${attack.baseComboScaling}', ` +
-					`'${attack.riscGain}', '${attack.riscLoss}');\n\n`;
+					`'${attack.riscGain}', '${attack.riscLoss}');\n`;
 				moveId++;
 			});
 			characterId++;
 
-			fs.appendFile(outputScript, insertQuery, error => {
+			fs.writeFile(outputScript, insertQuery, error => {
 				if (error)
 					console.log(error);
 				else 
@@ -89,7 +108,7 @@ characterLinks.strive.forEach(link => {
 
 // console.log("Strive web scrape complete.")
 
-const formatData = (tableRow) => {
+const formatAttackData = (tableRow) => {
 	let i = 0;
   // Checking if second row contains an Attack name.
 	if (!tableRow[1].match(/^\d/)) i++;
@@ -118,23 +137,18 @@ const formatData = (tableRow) => {
 	return attack;
 };
 
-/* WIP for extra character data
-$(".cargoTable tr", HTML).each((_, element) => {
-  const characterData = $(element)
-    .text()
-    .replace(/ +/g, "_")
-    .replace(/\t{16}/g," undefined ".repeat(3))
-    .replace(/\t{12}/g," undefined ".repeat(2))
-    .replace(/\t{8}/g," undefined ")
-    .replace(/\s+/g, " ")
-    .replace("'", "''");
-  
-  if (!characterData.startsWith("38"))
-    temporaryCharacter.push(characterData);
-  
-  temporaryCharacter.forEach(entry => {
-    const info = entry.split(" ")
-    characterInfo.push(info)
-  });
-});
-characterInfo.forEach(e => console.log(e.toString())) */
+const formatCharacterData = (tableRow) => {
+	let i = 0;
+	return {
+		name: tableRow[i++],
+		defense: tableRow[i++],
+		guts: tableRow[i++],
+		prejump: tableRow[i++],
+		weight: tableRow[i++],
+		backDash: tableRow[i++],
+		forwardDash: tableRow[i++],
+		umo: tableRow[i++],
+		riscMult: tableRow[i++],
+		tensionGain: tableRow[i]
+	}
+}
