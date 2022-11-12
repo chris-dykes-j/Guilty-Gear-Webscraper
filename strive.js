@@ -22,13 +22,10 @@ characterLinks.test.forEach(link => {
 			const HTML = res.data;
 			const $ = cheerio.load(HTML);
 
-			// Getting arrays ready.
+			// Character Data: 
 			let characterInfo = [];
 			let tempCharacter = [];
-			let attackData = [];
-			let tempAttack = [];
-
-			// Getting character data.
+			
 			$(".cargoTable tr", HTML).each((_, element) => {
 				const characterData = $(element)
 					.text()
@@ -40,6 +37,10 @@ characterLinks.test.forEach(link => {
 
 				tempCharacter.forEach(entry => characterInfo.push(entry.split(" ")));
 			});
+			
+			// Move Data:
+			let attackData = [];
+			let tempAttack = [];
 			
 			// Taking table rows, extracting cells; regex to deal with whitespace from HTML.
 			$(".cargoDynamicTable tr", HTML).each((_, element) => {
@@ -68,12 +69,30 @@ characterLinks.test.forEach(link => {
 				attackData.push(attack);
 			});
 
+			// Gatling Data:
+			let tempGatling = [];
+			let gatlingData = [];
+			
+			$(".wikitable tr", HTML).each((_, element) => {
+				const gatling = $(element)
+					.text()
+					.replace(/\n/g, " ")
+				tempGatling.push(gatling);
+				console.log(gatling);
+			});
+			
+			tempGatling.forEach(entry => {
+				const gatling = entry.split("\t\t\t\t");
+				gatlingData.push(gatling);
+			});
+			// console.log(gatlingData);
+			
+			// Query preparation:
 			const character = formatCharacterData(characterInfo[0][0]);
 			let insertQuery = '\n' + `INSERT INTO ${characterTable} VALUES (${characterId}, '${character.name}', ` +
 				`'${character.defense}', '${character.guts}', '${character.prejump}', '${character.weight}', '${character.backDash}', ` +
 				`'${character.forwardDash}', '${character.umo}', '${character.riscMult}', '${character.tensionGain}');\n\n`;
 			
-			// Formats all attack data for SQL file.
 			attackData.forEach(tableRow => {
 				const attack = formatAttackData(tableRow); // Formats the data for output.
 				insertQuery +=
