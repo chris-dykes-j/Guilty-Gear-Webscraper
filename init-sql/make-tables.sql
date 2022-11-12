@@ -1,6 +1,6 @@
 -- noinspection SqlNoDataSourceInspectionForFile
 
--- How should this be organized for all games?
+-- Strive
 
 CREATE TABLE strive_characters (
     id SERIAL PRIMARY KEY,
@@ -47,6 +47,8 @@ CREATE TABLE strive_gatling_options (
     d TEXT
 );
 
+-- Xrd Rev 2
+
 CREATE TABLE xrd_rev2_characters (
     id SERIAL PRIMARY KEY,
     character_name TEXT,
@@ -63,12 +65,28 @@ CREATE TABLE xrd_rev2_characters (
 );
 
 CREATE TABLE xrd_rev2_move_list (
-    id SERIAL PRIMARY KEY
+    id SERIAL PRIMARY KEY,
+    character_id INT REFERENCES xrd_rev2_characters(id),
+    move_name TEXT,
+    input TEXT,
+    damage TEXT,
+    risc_p TEXT,
+    risc_m TEXT,
+    prorate TEXT,
+    guard TEXT,
+    level TEXT,
+    cancel TEXT,
+    tension TEXT,
+    startup TEXT,
+    active TEXT,
+    recovery_frames TEXT,
+    on_block TEXT,
+    invulnerability TEXT
 );
 
 CREATE TABLE xrd_rev2_gatling_options (
     id SERIAL PRIMARY KEY,
-    move_id INT REFERENCES xrd_rev2_move_list (id),
+    move_id INT REFERENCES xrd_rev2_move_list(id),
     gatling_move TEXT,
     p TEXT,
     k TEXT,
@@ -77,6 +95,8 @@ CREATE TABLE xrd_rev2_gatling_options (
     d TEXT,
     cancel TEXT
 );
+
+-- Accent Core Plus R
 
 CREATE TABLE plus_r_characters (
     id SERIAL PRIMARY KEY,
@@ -94,7 +114,28 @@ CREATE TABLE plus_r_characters (
 );
 
 CREATE TABLE plus_r_move_list (
-    id SERIAL PRIMARY KEY
+    id SERIAL PRIMARY KEY,
+    character_id INT REFERENCES plus_r_characters(id),
+    move_name TEXT,
+    input TEXT,
+    damage TEXT,
+    gbp TEXT,
+    gbm TEXT,
+    prorate TEXT,
+    guard TEXT,
+    level TEXT,
+    cancel TEXT,
+    tension TEXT,
+    startup TEXT,
+    active TEXT,
+    recovery_frames TEXT,
+    on_block TEXT,
+    invulnerability TEXT,
+    block_stun TEXT,
+    ground_hit TEXT, 
+    air_hit TEXT,
+    hit_stop TEXT,
+    frc_window TEXT
 );
 
 CREATE TABLE plus_r_gatling_options (
