@@ -18,9 +18,9 @@ CREATE TABLE strive_characters (
 
 CREATE TABLE strive_move_list (
     id SERIAL PRIMARY KEY,
-    character_id INT REFERENCES strive_characters (id),
-    move_name TEXT,	
+    character_id INT REFERENCES strive_characters(id),
     input TEXT,
+    move_name TEXT,	
     damage TEXT,
     guard TEXT,
     startup TEXT,
@@ -43,7 +43,8 @@ CREATE TABLE strive_gatling_options (
     k TEXT,
     s TEXT,
     h TEXT,
-    d TEXT
+    d TEXT,
+    cancel TEXT
 );
 
 -- Xrd Rev 2
@@ -66,8 +67,8 @@ CREATE TABLE xrd_rev2_characters (
 CREATE TABLE xrd_rev2_move_list (
     id SERIAL PRIMARY KEY,
     character_id INT REFERENCES xrd_rev2_characters(id),
-    move_name TEXT,
     input TEXT,
+    move_name TEXT,
     damage TEXT,
     risc_p TEXT,
     risc_m TEXT,
@@ -114,8 +115,8 @@ CREATE TABLE plus_r_characters (
 CREATE TABLE plus_r_move_list (
     id SERIAL PRIMARY KEY,
     character_id INT REFERENCES plus_r_characters(id),
-    move_name TEXT,
     input TEXT,
+    move_name TEXT,
     damage TEXT,
     gbp TEXT,
     gbm TEXT,
