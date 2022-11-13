@@ -4,10 +4,10 @@ const fs = require("fs");
 
 // Important constants
 const characterLinks = require("./character-links.json");
-const outputScript = "../output-sql/xrd-move-data.sql";
-const characterTable = "xrd_characters";
-const moveTable = "xrd_move_list";
-const gatlingTable = "xrd_gatling_table"; 
+const outputScript = "../output-sql/plus-r-move-data.sql";
+const characterTable = "plus_r_characters";
+const moveTable = "plus_r_move_list";
+const gatlingTable = "plus_r_gatling_table"; 
 
 // Most important part:
 console.log("Heaven or Hell");
@@ -17,7 +17,7 @@ let characterId = 1;
 let moveId = 1;
 let gatlingId = 1;
 
-characterLinks.xrd.forEach(link => { 
+characterLinks.accpr.forEach(link => { 
 	axios.get(link)
 		.then(res => {
 			const HTML = res.data;
@@ -31,7 +31,7 @@ characterLinks.xrd.forEach(link => {
 				const characterData = $(element)
 					.text()
 					.replace(/ +/g, "_")
-					.replace(/'/g, "''") // Thanks Chipp
+					.replace(/'/g, "''") 
 					.substring(1);
 				
 				if (!characterData.startsWith("ame", 0) && !characterData.startsWith("ump", 0))
@@ -96,15 +96,16 @@ characterLinks.xrd.forEach(link => {
 			let insertQuery =
 				'\n' + `INSERT INTO ${characterTable} VALUES (${characterId}, '${character.name}', ` +
 				`'${character.defense}', '${character.guts}', '${character.prejump}', '${character.weight}', '${character.backDash}', ` +
-				`'${character.forwardDash}', '${character.riscGain}', '${character.wakeUp}', '${character.wakeDown}', '${character.umo}');\n\n`;
+				`'${character.forwardDash}', '${character.guardBalance}', '${character.wakeUp}', '${character.wakeDown}', '${character.umo}');\n\n`;
 			
 			attackData.forEach(tableRow => {
 				const attack = formatAttackData(tableRow); // Formats the data for output.
 				insertQuery +=
 					`INSERT INTO ${moveTable} VALUES (${moveId}, ${characterId}, '${attack.input}', '${attack.moveName}', '${attack.damage}', ` +
-					`'${attack.riscP}', '${attack.riscM}', '${attack.proration}', '${attack.guard}', '${attack.level}', ` +
+					`'${attack.gbp}', '${attack.gbm}', '${attack.proration}', '${attack.guard}', '${attack.level}', ` +
 					`'${attack.cancel}', '${attack.tension}', '${attack.startup}', '${attack.active}', '${attack.recoveryFrames}', ` +
-					`'${attack.onBlock}', '${attack.invulnerability}');\n`;
+					`'${attack.onBlock}', '${attack.invulnerability}', '${attack.blockStun}', '${attack.groundHit}', ` +
+					`'${attack.airHit}', '${attack.hitStop}', '${attack.frcWindow}');\n`;
 				moveId++;
 			});
 			
@@ -141,8 +142,8 @@ const formatAttackData = (data) => {
 		input: tableRow[0], // Zero in all instances
 		moveName: tableRow[i++],
 		damage: tableRow[i++],
-		riscP: tableRow[i++],
-		riscM: tableRow[i],
+		gbp: tableRow[i++],
+		gbm: tableRow[i],
 		proration: tableRow[i++],
 		guard: tableRow[i++],
 		level: tableRow[i++],
@@ -152,7 +153,12 @@ const formatAttackData = (data) => {
 		active: tableRow[i++],
 		recoveryFrames: tableRow[i++],
 		onBlock: tableRow[i++],
-		invulnerability: tableRow[i]
+		invulnerability: tableRow[i++],
+		blockStun: tableRow[i++],
+		groundHit: tableRow[i++],
+		airHit: tableRow[i++],
+		hitStop: tableRow[i++],
+		frcWindow: (tableRow[i] !== undefined) ? tableRow[i] : "-"
 	};
 	
 	if (tableRow[0].includes("Throw")) // For fun.
@@ -176,7 +182,7 @@ const formatCharacterData = (data) => {
 		weight: tableRow[i++],
 		backDash: tableRow[i++],
 		forwardDash: tableRow[i++],
-		riscGain: tableRow[i++],
+		guardBalance: tableRow[i++],
 		wakeUp: tableRow[i++],
 		wakeDown: tableRow[i++],
 		umo: tableRow[i]
