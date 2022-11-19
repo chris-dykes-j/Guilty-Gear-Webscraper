@@ -2,17 +2,21 @@
 
 -- Strive
 
+DROP TABLE IF EXISTS strive_characters, strive_move_list, strive_gatling_table,
+    xrd_characters, xrd_move_list, xrd_gatling_table,
+    plus_r_characters, plus_r_move_list, plus_r_gatling_table CASCADE;
+
 CREATE TABLE strive_characters (
     id SERIAL PRIMARY KEY,
     character_name TEXT,
-    defense REAL,
-    guts INT,
-    pre_jump INT,
+    defense TEXT,
+    guts TEXT,
+    pre_jump TEXT,
     weight TEXT,
     back_dash TEXT,
-    forward_dash INT,
+    forward_dash TEXT,
     unique_movement TEXT,
-    risc_multiplier REAL,
+    risc_multiplier TEXT,
     movement_tension_gain TEXT
 );
 
@@ -36,8 +40,9 @@ CREATE TABLE strive_move_list (
     risc_loss TEXT
 );
 
-CREATE TABLE strive_gatling_options (
+CREATE TABLE strive_gatling_table (
     id SERIAL PRIMARY KEY,
+    character_id INT REFERENCES strive_characters(id),
     move_name TEXT,
     p TEXT,
     k TEXT,
@@ -49,24 +54,24 @@ CREATE TABLE strive_gatling_options (
 
 -- Xrd Rev 2
 
-CREATE TABLE xrd_rev2_characters (
+CREATE TABLE xrd_characters (
     id SERIAL PRIMARY KEY,
     character_name TEXT,
-    defense REAL,
-    guts INT,
-    pre_jump INT,
+    defense TEXT,
+    guts TEXT,
+    pre_jump TEXT,
     weight TEXT,
     back_dash TEXT,
-    forward_dash INT,
+    forward_dash TEXT,
     risc_gain_rate TEXT,
     wake_up_face_up TEXT,
     wake_up_face_down TEXT,
     unique_movement TEXT
 );
 
-CREATE TABLE xrd_rev2_move_list (
+CREATE TABLE xrd_move_list (
     id SERIAL PRIMARY KEY,
-    character_id INT REFERENCES xrd_rev2_characters(id),
+    character_id INT REFERENCES xrd_characters(id),
     input TEXT,
     move_name TEXT,
     damage TEXT,
@@ -84,8 +89,9 @@ CREATE TABLE xrd_rev2_move_list (
     invulnerability TEXT
 );
 
-CREATE TABLE xrd_rev2_gatling_options (
+CREATE TABLE xrd_gatling_table (
     id SERIAL PRIMARY KEY,
+    character_id INT REFERENCES xrd_characters(id),
     move_name TEXT,
     p TEXT,
     k TEXT,
@@ -100,13 +106,13 @@ CREATE TABLE xrd_rev2_gatling_options (
 CREATE TABLE plus_r_characters (
     id SERIAL PRIMARY KEY,
     character_name TEXT,
-    defense REAL,
-    guts INT,
-    pre_jump INT,
+    defense TEXT,
+    guts TEXT,
+    pre_jump TEXT, 
     weight TEXT,
     back_dash TEXT,
-    forward_dash INT,
-    guard_balance INT,
+    forward_dash TEXT,
+    guard_balance TEXT,
     wake_up_face_up TEXT,
     wake_up_face_down TEXT,
     unique_movement TEXT
@@ -137,9 +143,9 @@ CREATE TABLE plus_r_move_list (
     frc_window TEXT
 );
 
-CREATE TABLE plus_r_gatling_options (
+CREATE TABLE plus_r_gatling_table (
     id SERIAL PRIMARY KEY,
-    character_id INT REFERENCES strive_characters(int),
+    character_id INT REFERENCES plus_r_characters(id),
     move_name TEXT,
     p TEXT,
     k TEXT,
