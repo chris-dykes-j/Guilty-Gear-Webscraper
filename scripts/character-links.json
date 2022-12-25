@@ -20,7 +20,8 @@
     "https://dustloop.com/wiki/index.php?title=GGST/Giovanna/Frame_Data",
     "https://dustloop.com/wiki/index.php?title=GGST/Goldlewis_Dickinson/Frame_Data",
     "https://dustloop.com/wiki/index.php?title=GGST/Testament/Frame_Data",
-    "https://dustloop.com/wiki/index.php?title=GGST/Bridget/Frame_Data"
+    "https://dustloop.com/wiki/index.php?title=GGST/Bridget/Frame_Data",
+    "https://dustloop.com/w/GGST/Sin_Kiske/Frame_Data"
   ],
   "xrd" : [
     "https://www.dustloop.com/w/GGXRD-R2/Jam_Kuradoberi/Frame_Data",
@@ -77,6 +78,6 @@
     "https://www.dustloop.com/w/GGACR/Justice/Frame_Data"
   ],
   "test" : [
-    "https://www.dustloop.com/w/GGACR/Eddie/Frame_Data"
+    "https://dustloop.com/wiki/index.php?title=GGST/Jack-O/Frame_Data"
   ]
 }

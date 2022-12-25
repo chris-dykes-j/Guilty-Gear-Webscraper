@@ -3,8 +3,8 @@
 December 20th, 2022
 
 Update goals:
-- [ ] Update to recent patch
-- [ ] Add Sin Kiske to output
+- [x] Update to recent patch
+- [x] Add Sin Kiske to output
 - [ ] Fix a weird bug with Jack-O's output sql
 
 ---
